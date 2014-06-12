@@ -9,15 +9,21 @@ set_time_limit(0);
 
 require_once __DIR__.'/bootstrap.php.cache';
 require_once __DIR__.'/AppKernel.php';
+require_once __DIR__.'/OroRequirements.php';
 
 //use Symfony\Bundle\FrameworkBundle\Console\Application;
 use JMS\JobQueueBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 
-$input = new ArgvInput();
-$env = $input->getParameterOption(array('--env', '-e'), getenv('SYMFONY_ENV') ?: 'dev');
-$debug = getenv('SYMFONY_DEBUG') !== '0' && !$input->hasParameterOption(array('--no-debug', '')) && $env !== 'prod';
+$phpVersion  = phpversion();
+if (version_compare($phpVersion, OroRequirements::REQUIRED_PHP_VERSION, '>=')) {
+    $input = new ArgvInput();
+    $env = $input->getParameterOption(array('--env', '-e'), getenv('SYMFONY_ENV') ?: 'dev');
+    $debug = getenv('SYMFONY_DEBUG') !== '0' && !$input->hasParameterOption(array('--no-debug', '')) && $env !== 'prod';
 
-$kernel = new AppKernel($env, $debug);
-$application = new Application($kernel);
-$application->run($input);
+    $kernel = new AppKernel($env, $debug);
+    $application = new Application($kernel);
+    $application->run($input);
+} else {
+    echo sprintf('PHP version must be at least %s (%s installed)', OroRequirements::REQUIRED_PHP_VERSION, $phpVersion);
+}

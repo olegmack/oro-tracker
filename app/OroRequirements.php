@@ -32,8 +32,8 @@ class OroRequirements extends SymfonyRequirements
             version_compare($phpVersion, self::REQUIRED_PHP_VERSION, '>='),
             sprintf('PHP version must be at least %s (%s installed)', self::REQUIRED_PHP_VERSION, $phpVersion),
             sprintf(
-                'You are running PHP version "<strong>%s</strong>", but Oro needs at least PHP "<strong>%s</strong>" to run.' .
-                'Before using Oro, upgrade your PHP installation, preferably to the latest version.',
+                'You are running PHP version "<strong>%s</strong>", but Oro needs at least PHP "<strong>%s</strong>" ' .
+                'to run. Before using Oro, upgrade your PHP installation, preferably to the latest version.',
                 $phpVersion,
                 self::REQUIRED_PHP_VERSION
             ),
@@ -49,7 +49,10 @@ class OroRequirements extends SymfonyRequirements
         $this->addOroRequirement(
             null !== $curlVersion && version_compare($curlVersion['version'], self::REQUIRED_CURL_VERSION, '>='),
             'cURL extension must be at least ' . self::REQUIRED_CURL_VERSION,
-            'Install and enable the <strong>cURL</strong> extension at least ' . self::REQUIRED_CURL_VERSION . ' version'
+            sprintf(
+                'Install and enable the <strong>cURL</strong> extension at least %s version',
+                self::REQUIRED_CURL_VERSION
+            )
         );
 
         $this->addOroRequirement(
@@ -107,7 +110,8 @@ class OroRequirements extends SymfonyRequirements
             $requirement = new CliRequirement(
                 !$output,
                 'Requirements validation for PHP CLI',
-                'If you have multiple PHP versions installed, you need to configure ORO_PHP_PATH variable with PHP binary path used by web server'
+                'If you have multiple PHP versions installed, you need to configure' .
+                ' ORO_PHP_PATH variable with PHP binary path used by web server'
             );
 
             $requirement->setOutput($output);
@@ -120,7 +124,7 @@ class OroRequirements extends SymfonyRequirements
 
         $this->addPhpIniRequirement(
             'memory_limit',
-            function ($cfgValue) use ($mem) {
+            function () use ($mem) {
                 return $mem >= 256 * 1024 * 1024 || -1 == $mem;
             },
             false,
@@ -137,25 +141,28 @@ class OroRequirements extends SymfonyRequirements
         $this->addOroRequirement(
             is_writable($baseDir . '/web/uploads'),
             'web/uploads/ directory must be writable',
-            'Change the permissions of the "<strong>web/uploads/</strong>" directory so that the web server can write into it.'
+            'Change the permissions of the "<strong>web/uploads/</strong>"
+             directory so that the web server can write into it.'
         );
         $this->addOroRequirement(
             is_writable($baseDir . '/web/media'),
             'web/media/ directory must be writable',
-            'Change the permissions of the "<strong>web/media/</strong>" directory so that the web server can write into it.'
+            'Change the permissions of the "<strong>web/media/</strong>"
+            directory so that the web server can write into it.'
         );
         $this->addOroRequirement(
             is_writable($baseDir . '/web/bundles'),
             'web/bundles/ directory must be writable',
-            'Change the permissions of the "<strong>web/bundles/</strong>" directory so that the web server can write into it.'
+            'Change the permissions of the "<strong>web/bundles/</strong>"
+            directory so that the web server can write into it.'
         );
 
-       
         if (is_dir($baseDir . '/web/js')) {
             $this->addOroRequirement(
                 is_writable($baseDir . '/web/js'),
                 'web/js directory must be writable',
-                'Change the permissions of the "<strong>web/js</strong>" directory so that the web server can write into it.'
+                'Change the permissions of the "<strong>web/js</strong>" directory
+                so that the web server can write into it.'
             );
         }
 
@@ -163,7 +170,8 @@ class OroRequirements extends SymfonyRequirements
             $this->addOroRequirement(
                 is_writable($baseDir . '/web/css'),
                 'web/css directory must be writable',
-                'Change the permissions of the "<strong>web/css</strong>" directory so that the web server can write into it.'
+                'Change the permissions of the "<strong>web/css</strong>"
+                directory so that the web server can write into it.'
             );
         }
 
@@ -171,7 +179,8 @@ class OroRequirements extends SymfonyRequirements
             $this->addOroRequirement(
                 is_writable($baseDir . '/web'),
                 'web directory must be writable',
-                'Change the permissions of the "<strong>web</strong>" directory so that the web server can write into it.'
+                'Change the permissions of the "<strong>web</strong>" directory
+                so that the web server can write into it.'
             );
         }
 
@@ -179,10 +188,10 @@ class OroRequirements extends SymfonyRequirements
             $this->addOroRequirement(
                 is_writable($baseDir . '/app/config/parameters.yml'),
                 'app/config/parameters.yml file must be writable',
-                'Change the permissions of the "<strong>app/config/parameters.yml</strong>" file so that the web server can write into it.'
+                'Change the permissions of the "<strong>app/config/parameters.yml</strong>"
+                file so that the web server can write into it.'
             );
         }
-
     }
 
     /**
@@ -301,7 +310,7 @@ class OroRequirements extends SymfonyRequirements
 
         foreach ($requirements as $key => $requirement) {
             $testMessage = $requirement->getTestMessage();
-            if (preg_match_all(self::EXCLUDE_REQUIREMENTS_MASK, $testMessage, $matches)) {
+            if (preg_match_all(self::EXCLUDE_REQUIREMENTS_MASK, $testMessage)) {
                 unset($requirements[$key]);
             }
         }
@@ -318,7 +327,7 @@ class OroRequirements extends SymfonyRequirements
 
         foreach ($recommendations as $key => $recommendation) {
             $testMessage = $recommendation->getTestMessage();
-            if (preg_match_all(self::EXCLUDE_REQUIREMENTS_MASK, $testMessage, $matches)) {
+            if (preg_match_all(self::EXCLUDE_REQUIREMENTS_MASK, $testMessage)) {
                 unset($recommendations[$key]);
             }
         }
@@ -335,7 +344,7 @@ class OroRequirements extends SymfonyRequirements
         $nodeExists = $nodeExists->getProcess();
 
         if (isset($_SERVER['PATH'])) {
-            $nodeExists->setEnv(['PATH' => $_SERVER['PATH']]);
+            $nodeExists->setEnv(array('PATH' => $_SERVER['PATH']));
         }
         $nodeExists->run();
 
@@ -351,7 +360,7 @@ class OroRequirements extends SymfonyRequirements
         $getConf = $getConf->getProcess();
 
         if (isset($_SERVER['PATH'])) {
-            $getConf->setEnv(['PATH' => $_SERVER['PATH']]);
+            $getConf->setEnv(array('PATH' => $_SERVER['PATH']));
         }
         $getConf->run();
 
