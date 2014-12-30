@@ -1,0 +1,7 @@
+parameters:
+    oro_issue.entity.issue.class: Oro\Bundle\IssueBundle\Entity\Issue
+
+    oro_issue.from.type.issue_api.class: Oro\Bundle\IssueBundle\Form\Type\IssueApiType
+    oro_issue.from.handler.issue_api.class: Oro\Bundle\IssueBundle\Form\Handler\IssueHandler
+
+services:

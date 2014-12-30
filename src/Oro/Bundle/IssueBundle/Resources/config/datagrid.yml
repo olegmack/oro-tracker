@@ -1,0 +1,88 @@
+datagrid:
+    issues-grid:
+        source:
+            type: orm
+            acl_resource: oro_issue_view
+            query:
+                select:
+                    - issue.id
+                    - issue.code
+                    - issue.summary
+                    - issue.description
+                    - issue.createdAt
+                    - issue.updatedAt
+                from:
+                    - { table: %oro_issue.entity.issue.class%, alias: issue }
+        columns:
+            code:
+                label: oro.issue.code.label
+            summary:
+                label: oro.issue.summary.label
+            createdAt:
+                label: oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label: oro.ui.updated_at
+                frontend_type: datetime
+        sorters:
+            columns:
+                summary:
+                    data_name: issue.summary
+                code:
+                    data_name: issue.code
+                createdAt:
+                    data_name: issue.createdAt
+                updatedAt:
+                    data_name: issue.updatedAt
+            default:
+                updatedAt: DESC
+
+        filters:
+            columns:
+                summary:
+                    type:      string
+                    data_name: issue.summary
+                createdAt:
+                    type:      datetime
+                    data_name: task.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: task.updatedAt
+        properties:
+            id: ~
+            view_link:
+                type:       url
+                route:      oro_issue_view
+                params:     [ id ]
+            update_link:
+                type:       url
+                route:      oro_issue_update
+                params:     [ id ]
+            delete_link:
+                type:       url
+                route:      oro_issue_delete
+                params:     [ id ]
+
+        actions:
+            view:
+                type:          navigate
+                acl_resource:  oro_issue_view
+                label:         oro.grid.action.view
+                icon:          eye-open
+                link:          view_link
+                rowAction:     true
+            update:
+                type:          navigate
+                acl_resource:  oro_issue_create
+                label:         oro.grid.action.update
+                icon:          edit
+                link:          update_link
+                rowAction:     true
+            delete:
+                type:          delete
+                acl_resource:  oro_issue_delete
+                label:         oro.grid.action.delete
+                icon:          trash
+                link:          delete_link
+                rowAction:     true
+

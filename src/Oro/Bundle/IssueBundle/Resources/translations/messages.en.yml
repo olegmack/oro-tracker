@@ -1,0 +1,17 @@
+oro:
+    issue:
+        entity_plural_label: Issues
+        entity_label:        Issue
+        create:              Create
+        list_label:          Issues List
+        code.label:          Code
+        summary.label:       Summary
+        description.label:   Description
+        priority.label:      Priority
+        resolution.label:    Resolution
+        assignee.label:      Assignee
+        issue_type.label:    Type
+
+        controller:
+            issue.saved.message: Issue has been saved
+            issue.deleted.message: Issue was deleted successfully
