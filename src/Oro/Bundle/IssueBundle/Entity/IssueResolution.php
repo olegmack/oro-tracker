@@ -12,6 +12,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class IssueResolution
 {
+    const CODE_UNRESOLVED = 'unresolved';
+    const CODE_FIXED      = 'fixed';
+    const CODE_DUPLICATE  = 'duplicate';
+    const CODE_WONTFIX    = 'wontfix';
+    const CODE_DONE       = 'done';
+
     /**
      * @var string
      *
@@ -26,6 +32,13 @@ class IssueResolution
      * @ORM\Column(name="label", type="string", length=255, unique=true)
      */
     protected $label;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="priority", type="integer")
+     */
+    protected $priority;
 
     /**
      * @param string $name
@@ -66,6 +79,25 @@ class IssueResolution
     public function getLabel()
     {
         return $this->label;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
+     * @param integer $priority
+     * @return IssueResolution
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
+
+        return $this;
     }
 
     /**

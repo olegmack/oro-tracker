@@ -8,16 +8,44 @@ datagrid:
                     - issue.id
                     - issue.code
                     - issue.summary
-                    - issue.description
+                    - issue.issueType
+                    - priority.label as priorityLabel
+                    - resolution.label as resolutionLabel
+                    - assignee.id as assigneeId
+                    - CONCAT(assignee.firstName, CONCAT(' ', assignee.lastName)) as assigneeName
+                    - reporter.id as reporterId
+                    - CONCAT(reporter.firstName, CONCAT(' ', reporter.lastName)) as reporterName
                     - issue.createdAt
                     - issue.updatedAt
                 from:
                     - { table: %oro_issue.entity.issue.class%, alias: issue }
+                join:
+                    left:
+                        - { join: issue.priority, alias: priority }
+                        - { join: issue.resolution, alias: resolution }
+                        - { join: issue.assignee, alias: assignee }
+                        - { join: issue.reporter, alias: reporter }
         columns:
             code:
                 label: oro.issue.code.label
             summary:
                 label: oro.issue.summary.label
+            issueType:
+                label: oro.issue.issue_type.label
+            priorityLabel:
+                label: oro.issue.priority.label
+            resolutionLabel:
+                label: oro.issue.resolution.label
+            reporterName:
+                label: oro.issue.reporter.label
+                type:  twig
+                frontend_type: html
+                template: OroIssueBundle:Issue:Datagrid/Property/reporter.html.twig
+            assigneeName:
+                label: oro.issue.assignee.label
+                type:  twig
+                frontend_type: html
+                template: OroIssueBundle:Issue:Datagrid/Property/assignee.html.twig
             createdAt:
                 label: oro.ui.created_at
                 frontend_type: datetime
@@ -36,7 +64,6 @@ datagrid:
                     data_name: issue.updatedAt
             default:
                 updatedAt: DESC
-
         filters:
             columns:
                 summary:
@@ -44,10 +71,10 @@ datagrid:
                     data_name: issue.summary
                 createdAt:
                     type:      datetime
-                    data_name: task.createdAt
+                    data_name: issue.createdAt
                 updatedAt:
                     type:      datetime
-                    data_name: task.updatedAt
+                    data_name: issue.updatedAt
         properties:
             id: ~
             view_link:
@@ -60,9 +87,8 @@ datagrid:
                 params:     [ id ]
             delete_link:
                 type:       url
-                route:      oro_issue_delete
+                route:      oro_api_delete_issue
                 params:     [ id ]
-
         actions:
             view:
                 type:          navigate

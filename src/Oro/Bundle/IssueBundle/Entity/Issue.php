@@ -7,6 +7,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\TagBundle\Entity\Taggable;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use Oro\Bundle\IssueBundle\Model\ExtendIssueEntity;
 
@@ -16,6 +19,25 @@ use Oro\Bundle\IssueBundle\Model\ExtendIssueEntity;
  * @ORM\Table(name="oro_issue")
  * @ORM\HasLifecycleCallbacks()
  * @ORM\Entity(repositoryClass="Oro\Bundle\IssueBundle\Entity\Repository\IssueRepository")
+ * @Config(
+ *      routeName="oro_issue_index",
+ *      routeView="oro_issue_view",
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-list-alt"
+ *          },
+ *          "ownership"={
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="owner_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *          }
+ *      }
+ * )
  */
 class Issue extends ExtendIssueEntity implements Taggable
 {
@@ -76,7 +98,6 @@ class Issue extends ExtendIssueEntity implements Taggable
      * @ORM\Column(name="issue_type", type="string", length=255)
      */
     protected $issueType;
-
 
     /**
      * @var \DateTime
@@ -147,6 +168,22 @@ class Issue extends ExtendIssueEntity implements Taggable
      * @var ArrayCollection $tags
      */
     protected $tags;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $owner;
+
+    /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $organization;
 
     public function __construct()
     {
@@ -483,5 +520,51 @@ class Issue extends ExtendIssueEntity implements Taggable
         $this->parent = $parent;
 
         return $this;
+    }
+
+    /**
+     * Set owner
+     *
+     * @param User $owner
+     * @return Issue
+     */
+    public function setOwner(User $owner = null)
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return User
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * Set organization
+     *
+     * @param Organization $organization
+     * @return Issue
+     */
+    public function setOrganization(Organization $organization = null)
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * Get organization
+     *
+     * @return Organization
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
     }
 }

@@ -10,7 +10,13 @@ oro:
         priority.label:      Priority
         resolution.label:    Resolution
         assignee.label:      Assignee
+        reporter.label:      Reporter
         issue_type.label:    Type
+        issue_type:
+            task:       Task
+            story:      Story
+            subtask:    Subtask
+            bug:        Bug
 
         controller:
             issue.saved.message: Issue has been saved

@@ -53,6 +53,12 @@ class IssueController extends Controller
     public function createAction()
     {
         $entity = $this->initEntity();
+
+        $reporter = $this->getUser();
+        if ($reporter) {
+            $entity->setReporter($reporter);
+        }
+
         return $this->update($entity);
     }
 
@@ -127,7 +133,7 @@ class IssueController extends Controller
      * @AclAncestor("oro_issue_view")
      * @Template
      *
-     * @param Issue $entity
+     * @param Issue $issue
      * @return array
      */
     public function viewAction(Issue $issue)
