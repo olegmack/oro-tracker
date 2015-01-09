@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\IssueBundle\Model;
 
-class ExtendIssueEntity
+class ExtendIssue
 {
     /**
      * Constructor

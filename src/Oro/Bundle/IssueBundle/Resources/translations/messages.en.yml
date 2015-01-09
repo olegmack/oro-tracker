@@ -12,11 +12,21 @@ oro:
         assignee.label:      Assignee
         reporter.label:      Reporter
         issue_type.label:    Type
+        related_issues.label: Related Issues
+        parent.label:        Parent
+        owner.label:         Owner
+        organization.label:  Organization
+        collaborators.label: Collaborators
+        add_entity:          Add Issue
+
         issue_type:
             task:       Task
             story:      Story
             subtask:    Subtask
             bug:        Bug
+
+        message:
+            no_collaborators:
 
         controller:
             issue.saved.message: Issue has been saved

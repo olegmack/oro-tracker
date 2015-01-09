@@ -112,3 +112,12 @@ datagrid:
                 link:          delete_link
                 rowAction:     true
 
+    user-issues-grid:
+        extends: issues-grid
+        source:
+            query:
+                where:
+                    and:
+                        - (assignee.id = :id OR reporter.id = :id)
+            bind_parameters:
+                - id

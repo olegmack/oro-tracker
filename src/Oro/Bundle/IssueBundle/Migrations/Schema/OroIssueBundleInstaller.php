@@ -27,16 +27,16 @@ class OroIssueBundleInstaller implements Installation
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-//        $this->createOroIssueTable($schema);
-//        $this->createOroIssueCollaboratorsTable($schema);
-//        $this->createOroIssuePriorityTable($schema);
-//        $this->createOroIssueRelatedTable($schema);
-//        $this->createOroIssueResolutionTable($schema);
-//
-//        /** Foreign keys generation **/
-//        $this->addOroIssueForeignKeys($schema);
-//        $this->addOroIssueCollaboratorsForeignKeys($schema);
-//        $this->addOroIssueRelatedForeignKeys($schema);
+        $this->createOroIssueTable($schema);
+        $this->createOroIssueCollaboratorsTable($schema);
+        $this->createOroIssuePriorityTable($schema);
+        $this->createOroIssueRelatedTable($schema);
+        $this->createOroIssueResolutionTable($schema);
+
+        /** Foreign keys generation **/
+        $this->addOroIssueForeignKeys($schema);
+        $this->addOroIssueCollaboratorsForeignKeys($schema);
+        $this->addOroIssueRelatedForeignKeys($schema);
     }
 
     /**

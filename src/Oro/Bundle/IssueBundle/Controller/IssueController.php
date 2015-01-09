@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\IssueBundle\Controller;
 
+use Oro\Bundle\IssueBundle\Entity\IssuePriority;
+use Oro\Bundle\IssueBundle\Entity\IssueResolution;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -52,12 +54,8 @@ class IssueController extends Controller
      */
     public function createAction()
     {
-        $entity = $this->initEntity();
-
-        $reporter = $this->getUser();
-        if ($reporter) {
-            $entity->setReporter($reporter);
-        }
+        $userId = $this->getRequest()->get('userId');
+        $entity = $this->initEntity($userId);
 
         return $this->update($entity);
     }
@@ -93,11 +91,38 @@ class IssueController extends Controller
     /**
      * Initialize new issue entity
      *
+     * @param int|null $userId
      * @return Issue
+     * @throws NotFoundHttpException
      */
-    protected function initEntity()
+    protected function initEntity($userId = null)
     {
         $entity = new Issue();
+
+        if ($userId) {
+            $user = $this->getDoctrine()->getRepository('OroUserBundle:User')->find($userId);
+            if (!$user) {
+                throw new NotFoundHttpException(sprintf('User with ID %s is not found', $user));
+            }
+            $entity
+                ->setAssignee($user)
+                ->setReporter($user);
+        } elseif ($reporter = $this->getUser()) {
+            $entity->setReporter($reporter);
+        }
+
+        $issuePriority = $this->getDoctrine()
+            ->getRepository('OroIssueBundle:IssuePriority')
+            ->findOneByName(IssuePriority::CODE_MAJOR);
+        $entity->setPriority($issuePriority);
+
+        $issueResolution = $this->getDoctrine()
+            ->getRepository('OroIssueBundle:IssueResolution')
+            ->findOneByName(IssueResolution::CODE_UNRESOLVED);
+        $entity->setPriority($issueResolution);
+
+        $entity->setIssueType(Issue::TYPE_TASK);
+
         return $entity;
     }
 
@@ -109,23 +134,37 @@ class IssueController extends Controller
      */
     protected function update(Issue $entity)
     {
+        $saved = false;
+        $form = $this->createForm($this->getFormType(), $entity);
         if ($this->get('oro_issue.form.handler.issue')->process($entity)) {
-            $this->get('session')->getFlashBag()->add(
-                'success',
-                $this->get('translator')->trans('oro.issue.controller.issue.saved.message')
-            );
+            $saved = true;
+            if (!$this->getRequest()->request->has('_widgetContainer')) {
+                $this->get('session')->getFlashBag()->add(
+                    'success',
+                    $this->get('translator')->trans('oro.issue.controller.issue.saved.message')
+                );
 
-            return $this->get('oro_ui.router')->redirectAfterSave(
-                ['route' => 'oro_issue_update', 'parameters' => ['id' => $entity->getId()]],
-                ['route' => 'oro_issue_index'],
-                $entity
-            );
+                return $this->get('oro_ui.router')->redirectAfterSave(
+                    ['route' => 'oro_issue_update', 'parameters' => ['id' => $entity->getId()]],
+                    ['route' => 'oro_issue_index'],
+                    $entity
+                );
+            }
         }
 
         return array(
+            'saved'  => $saved,
             'entity' => $entity,
-            'form'   => $this->get('oro_issue.form.issue')->createView()
+            'form'   => $form->createView()
         );
+    }
+
+    /**
+     * @return IssueType
+     */
+    protected function getFormType()
+    {
+        return $this->get('oro_issue.form.type.issue');
     }
 
     /**

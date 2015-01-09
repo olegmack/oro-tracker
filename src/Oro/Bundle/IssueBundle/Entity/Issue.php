@@ -11,7 +11,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
-use Oro\Bundle\IssueBundle\Model\ExtendIssueEntity;
+use Oro\Bundle\IssueBundle\Model\ExtendIssue;
 
 /**
  * Issue
@@ -33,13 +33,17 @@ use Oro\Bundle\IssueBundle\Model\ExtendIssueEntity;
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
+ *          "workflow"={
+ *              "active_workflow"="oro_issue_workflow"
+ *          },
  *          "security"={
  *              "type"="ACL",
+ *              "group_name"=""
  *          }
  *      }
  * )
  */
-class Issue extends ExtendIssueEntity implements Taggable
+class Issue extends ExtendIssue implements Taggable
 {
     const TYPE_BUG     = 'bug';
     const TYPE_TASK    = 'task';

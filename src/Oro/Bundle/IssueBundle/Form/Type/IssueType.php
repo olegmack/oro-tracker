@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\IssueBundle\Form\Type;
 
-use Oro\Bundle\IssueBundle\Entity\Issue;
+use Doctrine\ORM\EntityRepository;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormBuilderInterface;
+
+use Oro\Bundle\IssueBundle\Entity\Issue;
 
 class IssueType extends AbstractType
 {
@@ -60,24 +63,6 @@ class IssueType extends AbstractType
                 ]
             )
             ->add(
-                'priority',
-                'entity',
-                [
-                    'label'    => 'oro.issue.priority.label',
-                    'class'    => 'Oro\Bundle\IssueBundle\Entity\IssuePriority',
-                    'required' => true
-                ]
-            )
-            ->add(
-                'resolution',
-                'entity',
-                [
-                    'label'    => 'oro.issue.resolution.label',
-                    'class'    => 'Oro\Bundle\IssueBundle\Entity\IssueResolution',
-                    'required' => true
-                ]
-            )
-            ->add(
                 'issueType',
                 'choice',
                 [
@@ -89,6 +74,32 @@ class IssueType extends AbstractType
                         Issue::TYPE_BUG     => 'oro.issue.issue_type.bug'
                     ],
                     'required' => true
+                ]
+            )
+            ->add(
+                'priority',
+                'entity',
+                [
+                    'label'    => 'oro.issue.priority.label',
+                    'class'    => 'Oro\Bundle\IssueBundle\Entity\IssuePriority',
+                    'required' => true,
+                    'query_builder' => function (EntityRepository $repository) {
+                        return $repository->createQueryBuilder('priority')->orderBy('priority.priority');
+                    }
+                ]
+            );
+
+        $builder
+            ->add(
+                'resolution',
+                'entity',
+                [
+                    'label'    => 'oro.issue.resolution.label',
+                    'class'    => 'Oro\Bundle\IssueBundle\Entity\IssueResolution',
+                    'required' => true,
+                    'query_builder' => function (EntityRepository $repository) {
+                        return $repository->createQueryBuilder('resolution')->orderBy('resolution.priority');
+                    }
                 ]
             );
     }
